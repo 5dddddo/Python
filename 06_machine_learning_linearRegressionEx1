@@ -1,0 +1,198 @@
+## 1. tensorflow module 설치(cpu 용)
+## conda install tensorflow
+import tensorflow as tf
+
+## 2. Hello World 출력
+## 상수를 하나 만들어요(상수 Node 생성)
+## Tensorflow의 Node는 숫자 연산과 데이터 입출력을 담당
+## session을 이용해서 node를 실행시켜야지
+## node가 가지고 있는 데이터를 출력할 수 있음
+my_node = tf.constant("Hello World")
+sess = tf.Session()
+print(sess.run(my_node))
+
+## tensorflow : google이 만든 machine library
+##              open source library
+##              수학적 계산을 하기 위한 library
+##              data flow graph를 이용
+## tensorflow를 이용해 그릴 수 있는data flow graph는
+## Node와 Edge로 구성된 방향성 있는 그래프
+
+## Node : 데이터의 입출력과 수학적 연산
+## Edge : 데이터를 Node로 실어 나르는 역할
+## Tensor : 동적 크기의 다차원 배열을 지칭
+
+import tensorflow as t
+
+node1 = tf.constant(10, dtype = tf.float32)
+node2 = tf.constant(20, dtype = tf.float32)
+
+## 현재 그래프만 만들어진 상태이고 메모리에 올라가기만 함
+## 실행 전에는 node3의 값 X 
+## 실행시켜야 연산이 수행되면서 node3 의 값이 30이 됨
+node3 = node1 + node2
+
+## 그래프를 실행시키기 위해 runner 역할을 하는
+## Session 객체가 있어야 함
+## tf.Session이 있어야 위의 그래프를 실행할 수 있음
+sess = tf.Session()  
+
+## 해당 노드, 해당 그래프만 실행됨
+## sess.run(해당노드/그래프)
+
+## node1만 실행 됨 
+#sess.run(node1)
+## node2만 실행 됨 
+#sess.run(node2)
+
+## 연산이 수행되며 node3의 값이 들어감
+print(sess.run(node3))
+
+## 복수개의 node를 실행시키려면 
+## 배열 형태로 입력해야 함 -> 결과도 배열 형태로 출력
+print(sess.run([node1,node2,node3]))
+
+# placeholder를 이용
+# 2개의 수를 입력으로 받아서 더하는 프로그램
+# 비어있는 값, 입력을 받아들이는 저장공간
+# 실행 시 feed_dict라는 속성값으로 입력해줌
+
+node1 = tf.placeholder(dtype=tf.float32)
+node2 = tf.placeholder(dtype=tf.float32)
+
+node3 = node1 + node2
+sess=  tf.Session()
+result = sess.run(node3,feed_dict = {node1:10,node2:20})
+print(result)
+
+node1= tf.constant([10,20,30],dtype = tf.int32)
+sess = tf.Session()
+print(sess.run(node1))
+print(node1)
+node1= tf.cast(node1,dtype = tf.float32)
+print(sess.run(node1))
+print(node1)
+
+# training data set
+# x값이 1 일 때 y값이 1 이라는 label 값 가짐
+x = [1,2,3]
+y = [1,2,3]  # label
+
+# 선형 회귀(linear regression)
+# 가장 큰 목표는 가설의 완성
+# 가설(hypothesis) = Wx+b
+# W와 b 
+# Weight & bias 정의
+# Variable () : 계속 다른 값을 받아들이는, 변하는 값을 
+# 받아들여 변수처럼 동작하는 node
+# (tf.random_normal([1]), name="weight"):
+# 정규 분포 내에서 난수 1차원 1개
+# name="weight" : tensorflow가 사용할 이름 지정 
+W = tf.Variable(tf.random_normal([1]), name="weight")
+b = tf.Variable(tf.random_normal([1]), name="bias")
+
+# Hypothesis(가설)
+# 우리의 최종 목적은 training data에 가장
+# 근접한 hypothesis를 만드는 것(W와 b를 결정)
+# 잘 만들어진 가설은 W가 1에 가깝고 b가 0에 가까워야 함
+H = W*x + b
+# W와 b, H 모두 Node
+
+
+# cost(loss) function :
+# 우리의 목적은 cost함수를 최소로 만드는 W,b 구하기
+# tf.reduce_mean() : 평균 구하는 함수
+cost = tf.reduce_mean(tf.square(H-y))
+
+## cost function minimize
+## python이 제공하는 GradientDescentOptimizer를 이용해
+## 최소가 되는 값 찾기
+## 기존 cost보다 더 작은 cost를 얻음
+
+optimizer= tf.train.GradientDescentOptimizer(learning_rate=0.01)
+train = optimizer.minimize(cost)
+
+
+## 그래프 실행하기 위한 runner 생성
+sess = tf.Session()
+## global variable을 반드시 초기화 해줘야 함 (W,b...)
+sess.run(tf.global_variables_initializer())
+
+# 학습 진행
+for step in range(3000):
+    _, w_val, b_val, cost_val = sess.run([train,W,b,cost])
+    if step%300 == 0:
+        print("{},{},{}".format(w_val,b_val,cost_val))
+        
+import tensorflow as tf
+
+## 1. training data set 준비
+
+# training data set으로 학습 후 
+# 머신러닝에 넘기기 위한 placeholder
+x = tf.placeholder(dtype = tf.float32)
+y = tf.placeholder(dtype = tf.float32)
+
+# 실제 training data set
+x_data = [1,2,3,4]
+y_data = [4,7,10,13]
+
+## 2. Hypothesis에 이용할 변수들 정의 & 초기화
+
+# 1000, 5 ,... 등 수를 지정해 주면 train시 문제 발생
+# 따라서, 0과 가까운 랜덤 값으로 초기화!
+W = tf.Variable(tf.random_normal([1]), name = "weight")
+b = tf.Variable(tf.random_normal([1]), name = "bias")
+
+## 3. Hypothesis 정의
+H = W * x + b
+
+## 4. cost(loss) function 정의 
+# 실제 데이터에 근접하는 Hypothesis를 찾아주는 함수 정의
+cost = tf.reduce_mean(tf.square(H-y))
+
+## 5. cost가 최소가 되도록 돕는 node 생성 
+#     =>tf.train.GradientDescentOptimizer
+# tensorflow에서 복잡한 계산을 줄일 수 있게 node 제공
+
+optimizer= tf.train.GradientDescentOptimizer(learning_rate=0.01)
+
+# GradientDescentOptimizer : 
+# 주위에서 경사가 가장 급한 곳(미분해서 기울기가 큰)으로 이동해서
+# 최솟값을 찾을 때까지 앞의 과정을 반복하는 알고리즘
+
+# learning_rate : 경험적으로 적합한 값을 찾아야 함
+#                 초기값으로 0.01 주로 사용 
+#                 경사가 급한 곳으로 얼마나 많이 이동할 것인지 정함
+# learning_rate 작으면 조금 움직임 , 시간이 오래걸림, 해 못찾을 수도
+# learning_rate 크면 많이 움직임 , 이상한 값 얻을 수 있음
+
+## 6.cost function을 최소화 하기 위해 정의
+train = optimizer.minimize(cost)
+
+# 그래프를 생성함
+#---------------------------------------
+
+## 7. 그래프를 실행 시키기 위한 runner 생성과
+## global variable(W,b) 초기화  작업
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# -----------------------------------------
+## 8. 학습 수행
+for step in range(3000):
+    # sess.run(train)만 해도 되지만
+    # cost값을 최소화하려는 의도대로 
+    # 학습이 잘 수행되고 있는지 확인하려고 같이 실행
+    _, cost_val = sess.run([train,cost],
+                           feed_dict={x:x_data,y:y_data})
+    if step % 300 == 0:
+        print("{}".format(cost_val))
+#------------------------------------------
+# 실제 test
+## 9. prediction : 예측 모델
+print(sess.run(H,feed_dict={x:[300]}))
+
+
+## cost func이 꿀렁꿀렁하면 gradient descent algo가 lccal minima에 빠져 global minima( 진짜 해 )를 못 구하는 문제 발생
+## cost function은 convex function 형태가 되어야 gradient descent algo를 적용할 수 있음
