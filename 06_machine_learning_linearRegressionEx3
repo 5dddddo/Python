@@ -1,0 +1,147 @@
+import tensorflow as tf
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+import warnings
+
+warnings.filterwarnings(action = "ignore")
+# training data set
+x_data = [1,2,5,8,10]
+y_data = [0,0,0,1,1]
+
+# placeholder
+x = tf.placeholder(dtype=tf.float32)
+y = tf.placeholder(dtype=tf.float32)
+
+# weight & bias
+W = tf.Variable(tf.random_normal([1]), name = "weight")
+b = tf.Variable(tf.random_normal([1]), name = "bias")
+
+# Hypothesis
+H = W*x+ b
+
+# cost function
+cost = tf.reduce_mean(tf.square(H-y))
+
+# train node 생성
+train = tf.train.GradientDescentOptimizer(learning_rate =0.01).minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 학습
+for step in range(30000):
+    _, cost_val = sess.run([train,cost], feed_dict={x:x_data,y:y_data})
+    if step % 3000 == 0:
+        print(cost_val)
+    
+# prediction
+print(sess.run(H, feed_dict={x:[6]}))
+
+# plot
+plt.scatter(x_data,y_data)
+# w와 b가 node이기 때문에 sess.run()으로 실행시켜야
+# node에 값이 할당 됨!
+plt.plot(x_data,x_data*sess.run(W)+sess.run(b),"r")
+plt.show()
+
+import tensorflow as tf
+
+# training data set
+x_data = [[30,0],[10,0],[8,1],[3,3],[2,3],[5,1],[2,0],[1,0]]
+y_data = [[1],[1],[1],[1],[1],[0],[0],[0]]
+
+
+# placeholder
+X = tf.placeholder(shape = [None,2], dtype=tf.float32)
+Y = tf.placeholder(shape = [None,1], dtype=tf.float32)
+
+# Weight & bias
+W = tf.Variable(tf.random_normal([2,1]),name="weight")
+b = tf.Variable(tf.random_normal([1]),name="bias")
+
+
+# Hypothesis
+logits = tf.matmul(X,W)+b
+# 지수 함수 형태의 H 정의
+H = tf.sigmoid(logits)
+
+# cost function
+cost = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits,labels=Y))
+
+# training node 생성
+train = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 학습
+for step in range(30000):
+    _, cost_val = sess.run([train,cost],feed_dict = {X:x_data,Y:y_data})
+    if step % 3000 == 0:
+        print(cost_val)
+        
+## Accuracy
+# H > 0.5 == 1 : True / H <= 0.5 == 0 : False
+predict = tf.cast(H>0.5,dtype=tf.float32)    
+
+## correct node
+correct = tf.equal(predict,Y)
+accuracy = tf.reduce_mean(tf.cast(correct,dtype=tf.float32))
+print("정확도 : {}".format(sess.run(accuracy,feed_dict = {X:x_data,Y:y_data})))
+
+# prediction
+print(sess.run(H, feed_dict = {X:[[4,2]]}))
+
+warnings.filterwarnings(action = "ignore")
+df = pd.read_csv("./data/admission/admission.csv")
+
+# training data set
+df_x = df.drop("admit",axis = 1,inplace =False)[0:280]
+df_y = df["admit"][0:280]
+x_data = MinMaxScaler().fit_transform(df_x.values)
+y_data = MinMaxScaler().fit_transform(df_y.values.reshape(-1,1))
+
+# placeholder
+X = tf.placeholder(shape = [None,3], dtype=tf.float32)
+Y = tf.placeholder(shape = [None,1], dtype=tf.float32)
+
+# Weight & bias
+W = tf.Variable(tf.random_normal([3,1]),name="weight")
+b = tf.Variable(tf.random_normal([1]),name="bias")
+
+
+# Hypothesis
+logits = tf.matmul(X,W)+b
+# 지수 함수 형태의 H 정의
+H = tf.sigmoid(logits)
+
+# cost function
+cost = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits,labels=Y))
+
+# training node 생성
+train = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 학습
+for step in range(30000):
+    _, cost_val = sess.run([train,cost],feed_dict = {X:x_data,Y:y_data})
+    if step % 3000 == 0:
+        print(cost_val)
+        
+## Accuracy
+# H > 0.5 == 1 : True / H <= 0.5 == 0 : False
+predict = tf.cast(H>0.5,dtype=tf.float32)    
+
+## correct node
+correct = tf.equal(predict,Y)
+accuracy = tf.reduce_mean(tf.cast(correct,dtype=tf.float32))
+print("정확도 : {}".format(sess.run(accuracy,feed_dict = {X:x_data,Y:y_data})))
+
+print(sess.run(H, feed_dict = {X:df.drop("admit",axis = 1,inplace =False)[280:]}))
+
