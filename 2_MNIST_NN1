@@ -1,0 +1,90 @@
+# MNIST (Neural network)
+# tensorflow에 example로 포함된 MNIST 예제를
+# NN으로 학습 ( accuracy => 95% )
+
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.examples.tutorials.mnist import input_data
+
+# Data loading
+mnist = input_data.read_data_sets("./data/mnist",one_hot=True)
+
+# Data 확인
+print(mnist.train.num_examples) # 학습용 데이터 개수
+print(mnist.train.images.shape) # x쪽 data
+                                # (55000, 784)
+                                # 28 x 28 이미지 55000개를 1차원 형태로 저장
+                                # pixel 정보 저장
+print(mnist.train.labels.shape) # y쪽 data : one_hot 형태로 10개의 label
+
+plt.imshow(mnist.train.images[0].reshape(28,28), cmap ="Greys", interpolation = "nearest")
+
+
+plt.show()
+
+# placeholder
+X = tf.placeholder(shape=[None,784], dtype= tf.float32)
+Y = tf.placeholder(shape=[None,10], dtype= tf.float32)
+
+# weight & bias
+# X * Y 행렬곱 사이즈 = [X의 행, Y의 열]
+W1 = tf.Variable(tf.random_normal([784,256]), name = "weight1")
+b1 = tf.Variable(tf.random_normal([256]), name = "bias1")
+layer1 =  tf.nn.relu(tf.matmul(X,W1) +b1 )
+
+W2 = tf.Variable(tf.random_normal([256,256]), name = "weight2")
+b2 = tf.Variable(tf.random_normal([256]), name = "bias2")
+layer2 =  tf.nn.relu(tf.matmul(layer1,W2) +b2 )
+
+W3 = tf.Variable(tf.random_normal([256,10]), name = "weight3")
+b3 = tf.Variable(tf.random_normal([10]), name = "bias3")
+
+
+# hypothesis
+logits = tf.matmul(layer2,W3) + b3
+H =tf.nn.relu(logits)
+
+# cost function
+cost = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels = Y))
+
+# train node 생성
+optimizer = tf.train.AdamOptimizer(learning_rate= 0.001)
+train = optimizer.minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 사용하는 data의 크기가 상당히 큼
+# 데이터의 크기에 상관없이 학습하는 방식 필요
+# epoch : train data를 1번 학습시키는 것
+
+# 학습 진행
+
+training_epoch= 30
+batch_size = 100 # 55000개의 행을 다 읽어들이는게 아니라
+                 # 50개씩 행 잘라서 반복 학습
+
+for step in range(training_epoch):
+    num_of_iter = int(mnist.train.num_examples / batch_size)
+    cost_val = 0
+    for i in range(num_of_iter):
+        # next_batch는 tensorflow가 제공해주는 함수
+        # batch_size만큼 train data에서 images, labels에서
+        # 끊어와서 해당 변수에 mapping
+        batch_x, batch_y = mnist.train.next_batch(batch_size)
+        _,cost_val = sess.run([train, cost],
+                             feed_dict = {X : batch_x, Y: batch_y})
+    if step % 30 == 0:
+        print(cost_val)
+        
+# Accuracy 측정
+predict = tf.argmax(H,1)
+correct = tf.equal(predict,tf.argmax(Y,1))
+accuracy = tf.reduce_mean(tf.cast(correct, dtype = tf.float32))
+
+result = sess.run(accuracy , feed_dict = {X:mnist.test.images,
+                                         Y:mnist.test.labels})
+
+print("정확도 : {}".format(result))
