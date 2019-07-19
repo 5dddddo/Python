@@ -1,0 +1,227 @@
+## Numpy
+## Numeric Python
+## Vector, Matrix 연산에 상당한 편의성 제공
+## Numpy는 그 자체로 의미가 있다기 보다는
+## 다른 module의 기본 자료구조로 이용
+## pandas의 matplotlib의 기본 자료구조로 이용
+
+## Numpy의 자료구조
+## 다차원 배열을 이용(n-dimensional array) => ndarray
+## ndarray는 python의 list와 상당히 유사
+## 주요 차이점은 ndarray는 같은 데이터 타입만 가능
+## list보다는 메모리 사용이나 속도면에서 상당히 좋음
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# list 만들기
+my_list = [1,2,3,4]
+print(my_list)
+print(type(my_list))
+print(type(my_list[0]))
+
+# numpy array 생성
+my_arr = np.array([1,2,3])
+print(my_arr)
+print(my_arr[0])
+print(type(my_arr))
+print(type(my_arr[0]))
+print(my_arr.dtype)
+
+# 두번째 numpy array 생성
+my_arr = np.array([100,3.14,"hello",True])
+print(my_arr)
+print(my_arr.dtype)
+
+my_list = [[1,2,3] ,[4,5,6]]
+
+#ndarray 생성시 데이터 타입을 명시해서 생성 가능
+arr = np.array(my_list,dtype=np.float64)
+print(my_list)
+print(arr)
+
+# list[1] 안의 1번 인덱스
+print(my_list[1][1])
+# Matrix 형태를 access하는 방법 : 1행 1열
+print(arr[1,1])
+
+my_list = [1,2,3,4]
+arr= np.array(my_list) # 1차원의 numpy array가 생성
+
+# ndim : 차원
+print(arr.ndim)
+
+# shape : # numpy array의 형태를 tuple로 표현
+# 해당 numpy array의 차원과 각 차원의 요소 개수를 알려줌
+print(arr.shape)
+
+# size : numpy array 안의 요소 개수
+print(arr.size)
+
+my_list = [[1,2,5,4,4]]
+
+# 2차원의 numpy array가 생성
+arr = np.array(my_list)
+print(arr)
+print(arr.ndim)
+print(arr.shape) 
+print(arr.size)
+print(len(arr)) # size와 비교해서 알아두기
+
+my_list = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
+arr = np.array(my_list)
+print(arr)
+print(arr.shape) # (4,3)
+
+# shape 지정시 요소의 전체 개수와 맞아야 함
+arr.shape = (12,)
+print(arr)
+
+arr.shape = (2,2,3) # 2차원 2행 3열
+print(arr)
+
+my_list = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
+arr = np.array(my_list)
+print(arr)
+
+# for문을 적절히 이용해서 numpy array 안의 데이터를 행렬 형태로 출력하세요!
+for i in range(arr.shape[0]):
+    for j in range(arr.shape[1]):
+        print(arr[i][j],end=" ")
+    print()    
+    
+arr = np.array([1.2,3.4,5.5,8.0,15.8])
+print(arr)
+print(arr.dtype)
+
+my_arr = arr.astype(np.int32) # numpy array dtype을 변환할 때 사용
+print(my_arr)
+
+# numpy array를 다양한 방식으로 만들기
+arr = np.array([1,2,3,4,5]) # 일반적인 생성 방법
+print(arr)
+
+# zeros( shape 지정 ) : shape을 tuple 형태로 알려줘야 0인 행렬 생성
+arr = np.zeros((3,4))
+print(arr)
+
+# ones( shape 지정 ) : shape을 tuple 형태로 알려줘야 1인 행렬 생성
+arr = np.ones((3,4))
+print(arr)
+
+# empty( shape 지정 ) : shape을 tuple 형태로 알려주면
+# 메모리 상에 numpy array가 생성되고 쓰레기값이 들어감
+arr3 = np.empty((10,4))
+print(arr3)
+
+# full(shape , 초기값, type)
+arr = np.full((3,4),9,dtype=np.float64)
+print(arr)
+
+# arange의 인자로 (0,10,2)를 사용
+# 0부터 9까지 간격은 2로해서 array 생성
+
+arr = np.arange(0,10,2) 
+print(arr)
+
+arr = np.arange(10)
+print(arr)
+
+# 범위를 실수로 잡으면 간격 1씩
+arr = np.arange(1.3, 7.2)
+print(arr)
+
+
+# start부터 end까지 범위에서 주어진 num 개의 간격으로
+# 데이터를 생성하고 싶을 때
+
+# linspace (start, end, num)
+arr =  np.linspace(0,10,11)
+print(arr)
+
+plt.plot(arr,"o")
+
+# 난수를 이용해서 numpy array를 만드는 방법
+
+
+# 1. np.random.normal() : 정규 분포를 이용한 난수를 발생시키고 이를 이용해 numpy array 생성 
+# np.random.normal(평균, 표준편차, shape)
+my_mean = 100
+my_std = 10
+arr = np.random.normal(my_mean,my_std,(1000,))
+plt.hist(arr, bins=100)
+plt.show()
+
+# np.random.rand() : 균등분포로 난수를 생성하여 numpy array를 만들 때 사용
+# [0,1)  [ : 이상 ( : 미만
+
+arr = np.random.rand(1000)
+
+plt.hist(arr,bins=10)
+plt.show()
+
+# np.random.randn() : 표준정규분포로 난수를 생성하여 numpy array 만들 때 사용
+# 표준 정규 분포 : 평균이 0이고 표준 편차가 1인 정규분포
+
+arr = np.random.randn(1000)
+plt.hist(arr,bins=10)
+plt.show()
+
+# np.random.randint() : 균등분포로 주어진 범위에서 정수형 난수를 생성하여 numpy array 만들 때 사용
+
+arr = np.random.randint(-100,100, (1000,))
+plt.hist(arr,bins=10)
+plt.show()
+
+
+# seed 값을 고정해서 같은 난수가 나오도록 함
+np.random.seed(100)
+arr = np.random.randint(-0,20, (5,))
+print(arr)
+
+arr = np.arange(0,12,1)
+
+print(arr.shape)
+
+# numpy array의 shape 변경
+arr.shape = (2,6)
+print(arr)
+
+# 위의 코드처럼 shape을 직접 변경해서 사용할 수 있지만
+# 이렇게 사용하는 경우는 거의 없음
+# 원본 shape 자체가 변화
+
+# reshape() : 원본은 그대로 있고 데이터를 공유하고 새로운 numpy array View를 만들어
+# 형태만 바꾸어 사용
+# 데이터 공유 장점 => 복사본을 만들면 Big data를 다룰 때 메모리 너무 많이 들기 때문에 reshape 사용
+
+arr = np.arange(0,12,1)
+arr_new = arr.reshape(4,3)
+
+arr[0] = 100
+print(arr)
+print(arr_new)
+
+# copy() : 새로운 numpy array 복사본 만들기
+arr = np.arange(0,12,1)
+arr_new = arr.reshape(4,3).copy()
+arr[0] = 100
+print(arr)
+print(arr_new)
+
+arr = np.arange(0,12,1)
+print(arr)
+
+
+# reshape()에 -1 주면 알아서 맞춰줌
+arr_1 = arr.reshape(-1,4)
+print(arr_1)
+
+# 5행 20열 numpy array 생성
+arr = np.arange(0,100,1).reshape(5,-1).copy()
+print(arr)
+
+# 다차원 배열을 1차원으로 바꾸기
+# 새로운 numpy array가 만들어지는게 아니라 View 생성, 데이터 공유
+arr_1 = arr.ravel()
+print(arr_1)
