@@ -1,0 +1,149 @@
+# multinomial classification -> BMI 예제
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+import warnings
+from sklearn.preprocessing import MinMaxScaler
+warnings.filterwarnings(action = "ignore")
+
+df = pd.read_csv("./data/bmi/bmi.csv",sep=",")
+df.dropna(how="any", inplace=True)
+split_count = int(df.shape[0] * 0.7)
+train_df = df.loc[:split_count,:]
+test_df = df.loc[split_count:,:]
+
+test_x_data = MinMaxScaler().fit_transform(test_df.drop("label" ,axis=1,inplace=False))
+test_y_data = tf.one_hot(test_df["label"],3)
+sess = tf.Session()
+test_y_data = sess.run(test_y_data)
+
+df_x = train_df.drop("label",axis = 1, inplace = False)
+# ONE-HOT Encoding
+df_y = train_df["label"]
+
+x_data = MinMaxScaler().fit_transform(df_x.values)
+y_data = tf.one_hot(df_y,3).eval(session=tf.Session())
+# placeholder
+X = tf.placeholder(shape=[None,2],dtype=tf.float32)
+Y = tf.placeholder(shape=[None,3],dtype=tf.float32)
+
+# weight & bias
+# logistic 3개가 모여있다~!
+# W와 b 모두 3개씩!
+W = tf.Variable(tf.random_normal([2,3]),name = "weight")
+b = tf.Variable(tf.random_normal([3]),name = "bias")
+     
+# hypothesis
+logits= tf.matmul(X,W)+b
+H = tf.nn.softmax(logits)
+
+# cost
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits,labels=Y))
+
+# training node 생성
+train = tf.train.GradientDescentOptimizer(learning_rate=1).minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 학습
+for step in range(10000):
+    _, cost_val = sess.run([train,cost],feed_dict = {X:x_data,Y:y_data})
+    if step % 1000 == 0 :
+        print(cost_val)
+        
+predict = tf.argmax(H,1)
+correct = tf.equal(predict,tf.argmax(Y,1))
+accuracy = tf.reduce_mean(tf.cast(correct,dtype = tf.float32))
+print("Accuracy : {}".format(sess.run(accuracy,feed_dict = {X :x_data,Y:y_data})))
+
+res = sess.run(tf.argmax(sess.run(H, feed_dict = {X:test_x_data}),1))
+# for idx,i in enumerate(res):
+#     if i == 0 : 
+#         print(idx,"저체중")
+#     elif i == 1 :
+#         print(idx,"표준")
+#     else : 
+#         print(idx,"과체중")
+
+#정확도 노드 출력
+print("테스트 정확도 :{}".format(sess.run(accuracy, feed_dict={X:test_x_data, Y:test_y_data})))  
+
+# -----------------------------------------------------------------------------------------------
+import tensorflow as tf
+import pandas as pd
+import warnings 
+from sklearn.preprocessing import MinMaxScaler
+
+
+warnings.filterwarnings(action="ignore")
+
+df = pd.read_csv("./data/bmi/bmi.csv", sep=",")
+#display(df)
+
+# #데이터정제
+df.dropna(how="any", inplace=True)
+# # NaN이 있는 모든 row 삭제
+
+split_count = int(df.shape[0] * 0.7)
+train_df = df.loc[:split_count,:]
+test_df = df.loc[split_count:,:]
+
+train_x_data = MinMaxScaler().fit_transform(train_df.drop("label" ,axis=1,inplace=False))
+train_y_data = tf.one_hot(train_df["label"],3)
+sess = tf.Session()
+train_y_data = sess.run(train_y_data)
+
+test_x_data = MinMaxScaler().fit_transform(test_df.drop("label" ,axis=1,inplace=False))
+test_y_data = tf.one_hot(test_df["label"],3)
+sess = tf.Session()
+test_y_data = sess.run(test_y_data)
+
+# placeholder
+X = tf.placeholder(shape=[None,2], dtype=tf.float32)
+Y = tf.placeholder(shape=[None,3], dtype=tf.float32)
+
+# Weight & bias
+W = tf.Variable(tf.random_normal([2,3]), name="weight")
+b = tf.Variable(tf.random_normal([3]), name="bias")
+
+#Hypothesis
+logits = tf.matmul(X,W)+b
+H=tf.nn.softmax(logits)
+
+#cost function
+cost = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=Y)) ##cost함수 Logistic function 변수 2개.
+
+#training node생성
+train = tf.train.GradientDescentOptimizer(learning_rate=1).minimize(cost)
+
+#Session. & 초기화
+sess=tf.Session()
+sess.run(tf.global_variables_initializer())
+
+#학습
+for step in range(10000):
+    _, cost_val = sess.run([train,cost], feed_dict={X:train_x_data, Y:train_y_data})
+    if step % 1000 ==0:
+        print(cost_val)              
+        
+#Accuracy
+predict= tf.argmax(H,1) #정수->실수 / 실수->정수  (True면1 False면0)
+correct = tf.equal(predict,tf.argmax(Y,1))
+accuracy = tf.reduce_mean(tf.cast(correct, dtype=tf.float32))   ##True/False를 cast해서 1/0 으로 튕겨내겠다.
+#x 축 data와 y축 data를 맞물려 비교해서 10개 중 5개 맞았으면 0.5를 반환. 이런식으로 data에 대한 정확도 측정을 할 수 있다.
+print("트레인 정확도 :{}".format(sess.run(accuracy, feed_dict={X:train_x_data, Y:train_y_data})))  #정확도 노드를 출력할 것이다. 
+print("테스트 정확도 :{}".format(sess.run(accuracy, feed_dict={X:test_x_data, Y:test_y_data})))  #정확도 노드를 출력할 것이다. 
+
+
+#prediction
+user_height = 178
+user_weight = 52
+
+norm_height = (user_height - train_df.loc[:,"height"].min()) / (train_df.loc[:,"height"].max() -  train_df.loc[:,"height"].min())
+norm_weight = (user_weight - train_df.loc[:,"weight"].min()) / (train_df.loc[:,"weight"].max() -  train_df.loc[:,"weight"].min())
+
+#norm_weight = (user_weight - train_x_data[:,1].min()) / (train_x_data[:,1].max() -  train_x_data[:,1].min())
+
+result = sess.run(predict, feed_dict={X:[[norm_height,norm_weight]]})
