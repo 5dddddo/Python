@@ -1,0 +1,51 @@
+import tensorflow as tf
+x_data = [[10,7,8,5],[8,8,9,4],[7,8,2,3],[6,3,9,3],[7,5,7,4],[3,5,6,2],[2,4,3,1]]
+# ONE-HOT Encoding
+y_data = [[1,0,0],
+     [1,0,0],
+     [0,1,0],
+     [0,1,0],
+     [0,1,0],
+     [0,0,1],
+     [0,0,1]]
+
+# placeholder
+X = tf.placeholder(shape=[None,4],dtype=tf.float32)
+Y = tf.placeholder(shape=[None,3],dtype=tf.float32)
+
+# weight & bias
+# logistic 3개
+# W와 b 모두 3개씩!
+W = tf.Variable(tf.random_normal([4,3]),name = "weight")
+b = tf.Variable(tf.random_normal([3]),name = "bias")
+     
+# hypothesis
+logits= tf.matmul(X,W)+b
+H = tf.nn.softmax(logits)
+
+# cost
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits,labels=Y))
+
+# training node 생성
+train = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(cost)
+
+# session & 초기화
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+
+# 학습
+for step in range(30000):
+    _, cost_val = sess.run([train,cost],feed_dict = {X:x_data,Y:y_data})
+    if step % 3000 == 0:
+        print(cost_val)
+        
+#  accuracy
+# logistic = > H가 0~1 사이의 실수로 값 산출
+# multinomial => H가 (확률,확률,확률)로 산출
+
+# argmax(node, axis = 1 : 열 방향) : axis 방향에서 가장 큰 값의 index return
+#               ex) (0.4,0.5,0.1) => 1
+predict = tf.argmax(H,1)
+correct = tf.equal(predict,tf.argmax(Y,1))
+accuracy = tf.reduce_mean(tf.cast(correct,dtype = tf.float32))
+print("Accuracy : {}".format(sess.run(accuracy,feed_dict = {X :x_data,Y:y_data})))
