@@ -16,6 +16,7 @@
 
 import numpy as np
 import pandas as pd
+import pymysql.cursors
 
 print("=" * 30)
 arr = np.array([-1,10,50,99],dtype=np.float64)
@@ -27,9 +28,6 @@ display(s)
 print(s.values)  # numpy 1차원 array로 리턴
 print(s.index)
 print(s.dtype)
-
-import numpy as np
-import pandas as pd
 
 # index를 문자로 쓸 수 있음
 s = pd.Series([-1,10,50,99], index =['c','a','k','tt'])
@@ -52,8 +50,6 @@ print(s.sum())
 ## 생산량을 랜덤하게 결정
 
 ## 2019-01-01부터 10일 간 모든 공장(A,B)의 생산량을 날짜별로 구하기
-import numpy as np
-import pandas as pd
 # 날짜 연산을 위한 import
 from datetime import date,timedelta
 # 문자열을 date type으로 parsing하기 위해 import
@@ -86,9 +82,6 @@ display(s)
 ## 거의 대부분의 경우 DataFrame을 이용해서 데이터 분석
 ## dictionary를 이용해서 생성
 
-import numpy as np
-import pandas as pd
-
 data = {"name": ["kim","lee","park","moon","kim"],
         "year":[2015,2016,2019,2019,2015],
         "point" : [3.1,4.3,1.2,2.3,3.9] }
@@ -105,8 +98,6 @@ print("DataFrame의 데이터 : {}".format(df.values))
 
 ## CSV 파일을 이용해서 DataFrame 생성
 ## 일반적으로 CSV 파일의 첫번째 행은 컬럼을 명시
-import numpy as np
-import pandas as pd
 
 df = pd.read_csv("./data/MovieLens/ratings.csv")
 #display(df)
@@ -121,9 +112,6 @@ display(df.tail())
 ## mysql을 이용해서 처리해 보아요!
 ## python에서 mysql을 사용할 수 있도록 도와주는
 ## module을 설치
-import pymysql.cursors
-import numpy as np
-import pandas as pd
 
 ## mysql을 다운로드 받아서 간단하게 설치-설정
 ## 데이터베이스를 연결하기 위한 변수를 하나 생성
@@ -138,8 +126,6 @@ display(df)
 
 # 3가지 형태의 데이터 파일을이용
 # CSV 파일을 읽어들여서 PANDAS의 DataFrame으로 표현
-import numpy as np
-import pandas as pd
 
 df = pd.read_csv("./data/MovieLens/ratings.csv")
 # display(df)
@@ -149,10 +135,6 @@ df = pd.read_csv("./data/MovieLens/ratings.csv")
 df.to_json("./data/MovieLens/ratings.json")
 
 ## JSON 파일을 읽어서 DataFrame을 만들어 보아요
-import numpy as np
-import pandas as pd
-import json
-
 file = open("./data/MovieLens/ratings.json")
 my_dict = json.load(file)
 file.close()
@@ -161,8 +143,6 @@ df = pd.DataFrame(my_dict)
 display(df)
 
 ## pandas의 dataframe의 제어
-import numpy as np
-import pandas as pd
 
 data = {"이름": ["홍길동","강감찬","이순신","신사임당"],
         "학과": ["컴퓨터","경영","철학","미술"],
@@ -177,8 +157,6 @@ display(df)
 ## dataframe은 기본적인 분석함수 제공
 display(df.describe())
 
-import numpy as np
-import pandas as pd
 import warnings
 
 # warning을 출려하지 않기 위한 설정
