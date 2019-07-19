@@ -1,0 +1,16 @@
+#machine learning 3가지 분류
+# 1. supervised learning (지도학습)
+# => training data에 label이 부여되어 있음
+# 2.  unsupervised learning (비지도학습)
+# => training data에 label이 존재하지 않음
+# => clustering 작업이 일반적으로 진행
+# 3. 강화학습
+# => 상점과 벌점을 이용하여 점점 더 좋은 방향으로
+# 학습해 나가는 방식
+
+## supervised learning (지도학습)
+## 1. single linear regression(단순 선형회귀)
+## 2. multiple linear regression(다중 선형회귀)
+## => matrix
+## 3. Logistic regression ( binary classification )
+## 4. multinomial classification
