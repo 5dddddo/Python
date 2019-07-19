@@ -1,0 +1,282 @@
+import numpy as np
+import pandas as pd
+import warnings
+import json
+
+# warning을 출려하지 않기 위한 설정
+# warnings.filterwarnings(action="ignore") ## off
+warnings.filterwarnings(action="default") ## on
+
+
+data = {"이름": ["홍길동","강감찬","이순신","신사임당"],
+        "학과": ["컴퓨터","경영","철학","미술"],
+        "학년":[1,3,2,4],
+        "학점":[3.1,2.9,4.5,3.9]
+       }
+
+df = pd.DataFrame(data,
+                 columns=["학과","이름","학년","학점"],
+                 index = ["one","two","three","four"])
+
+# 1. 이름이 강감찬인 사람을 찾아서
+# 이름과 학점을 Dataframe으로 출력하세요
+df["이름"] == "강감찬" ## boolean mask 생성
+display(df.loc[df["이름"] == "강감찬",["이름","학점"]])
+
+
+# 2. 학점이 2.5 초과 3.5 미만인 사람을 찾아서 학과와 이름 출력하세요
+display(df.loc[(df["학점"] > 2.5) & (df["학점"] < 3.5),["학과","이름"]])
+
+# 3. Grade라는 컬럼을 추가한 후 학점이 4.0이상인 사람을 찾아
+# 해당 사람만 grade를 'A'로 설정
+df.loc[df["학점"] >4.0,"grade"] = 'A'
+display(df)
+
+## dataFrame 조작을 위해 간단한 Dataframe을 생성
+# 사용하는 dataframe의 value 값은 [0,10) 범위의 난수형 정수
+# 균등 분포에서 추출해서 사용
+# 6행 4열짜리 dataframe 생성
+
+np.random.seed(0)
+df = pd.DataFrame(np.random.randint(0,10,(6,4)))
+
+# 컬럼 : ["A","B","C","D"]
+df.columns = ["A","B","C","D"]
+# index : 날짜를 이용 (2019-01-01부터 하루씩 증가)
+df.index=pd.date_range("20190101",periods = 6)
+
+# NaN을 포함하는 새로운 컬럼 "E"를 추가
+# [7,np.nan, 3, np.nan, 2, np.nan] 데이터 추가
+
+df["E"] = [7,np.nan, 3, np.nan, 2, np.nan]
+display(df)
+
+##########################
+# 결측값 처리
+#########################
+# 결측값을 제거(NaN이 포함된 row를 제거)
+
+# df.dropna(how="any",inplace=True)
+# display(df)
+
+# 결측값을 다른 값으로 대체
+df["E"] = [7,np.nan, 3, np.nan, 2, np.nan]
+# df.fillna(value=0,inplace=True)
+display(df)
+
+# 결측값을 찾기위한 mask
+display(df.isnull())
+
+# 간단 예제
+## "E" 컬럼의 값이 NaN인 모든 row를 찾고
+## 해당 row의 모든 columns의 값을 출력
+
+display(df.loc[df["E"].isnull(),:])
+
+# 평균(mean) : 수학적 확률의 기댓값
+#              어떤 사건을 무한히 반복했을 때
+#              얻을 수 있는 평균으로서 기대할 수 있는 값
+
+
+# 편차 (deviation): 확률변수 X와 평균값의 차이
+#                   데이터의 흩어진 정도를 수치화 하기에는 적합하지 X
+#                   편차의 합이 0이기 때문에
+
+# 분산 (Variance) : 데이터의 흩어진 정도를 알기 위해 사용되는 편차의 제곱의 평균
+#                   제곱을 사용했기 때문에 단위표현이 애매해지는 경우 존재
+
+# 표준편차 (standard deviation) : 분산의 제곱근
+
+# 공분산 (covariance ) : 두개의 확률변수에 대한 관계를 보여주는 값
+#      두개의 확률 변수에 대한 공분산 값이 양수 : 비례관계 
+#      하나의 확률 변수가 증가할 때 다른 확률변수도 증가하는 경향
+#      두개의 확률 변수에 대한 공분산 값이 음수 : 반비례 관계 
+#      하나의 확률 변수가 증가할 때 다른 확률변수는 감소하는 경향
+#      공분산 값이 0 이면 두 변수가 서로에게 영향을 끼치지 않는 독립적인 상태
+
+# 두 관계의 연관성은 공분산으로 알 수 없음
+# 그래서 나온 개념 : 상관관계
+
+# 상관관계(correlation) : 두 대상이 서로 연관성이 있다고 추측되는 관계
+# 성적 vs 자존감 
+# 온라인 게임 vs 폭력성
+
+## 상관계수 (correlation coefficient) : -1 과 1 사이의 실수
+#  0에 가까울 수록 연관성이 없다고 판단
+#  절댓값이 1에 가까울수록 밀접한 연관이 있다고 판단
+
+### 상관관계는 인과관계를 설명할 수 없음
+
+data = [[2,np.nan],
+       [7,-3],
+       [np.nan,np.nan],
+       [1,-2]]
+df = pd.DataFrame(data,columns=["one","two"],
+                 index=['a','b','c','d'])
+display(df)
+print("="*30)
+## numpy array는 축을 정해주지 않으면 모든 요소를 더함
+## dataframe은 축을 지정해주지 않으면 axis default = 0
+## 행 방향으로 더함
+display(df.sum()) ## 결과값은 Series
+display(df.sum(axis=0)) ## 결과값은 Series
+## Nan은 숫자 0.0으로 간주
+
+data = [[2,np.nan],
+       [7,-3],
+       [np.nan,np.nan],
+       [1,-2]]
+df = pd.DataFrame(data,columns=["one","two"],
+                 index=['a','b','c','d'])
+display(df)
+print("="*30)
+## "one" 컬럼의 값만 모두 더하기
+df["one"].sum()
+## 'b' 행의 모든 값 더하기
+df.loc['b'].sum()
+##"one" 컬럼의 평균 구하기 -> NaN은 배제함
+df["one"].mean()
+
+data = [[2,np.nan],
+       [7,-3],
+       [np.nan,np.nan],
+       [1,-2]]
+df = pd.DataFrame(data,columns=["one","two"],
+                 index=['a','b','c','d'])
+## 결측값 처리
+## "one" 컬럼의 결측값은 "one" columns의 평균으로 대체
+## "two" 컬럼의 결측값은 "two" columns의 최소값으로 대체
+df["one"] = df["one"].fillna(df["one"].mean())
+df["two"] = df["two"].fillna(df["two"].min())
+display(df)
+
+## random값을 도출해서 DataFrame을 생성
+np.random.seed(0)
+## 0~9까지의 정수형 난수를 생성(6,4)형태로 생성
+df = pd.DataFrame(np.random.randint(0,10,(6,4)))
+df.columns=["A","B","C","D"]
+df.index = pd.date_range("20190101",periods=6)
+random_date = np.random.permutation(df.index)
+# 원본은 고정되어 있고 바뀐 결과 DataFrame
+df2 = df.reindex(index=random_date,
+           columns=["B","A","D","C"])
+# display(df)
+display(df2)
+#index 기반으로 정렬
+df2.sort_index(axis=0, ascending=True)
+# 열 기반 정렬
+df2.sort_index(axis=1, ascending=True)
+
+## value 기반의 정렬
+# B 컬럼만 가지고 정렬
+df2.sort_values(by="B")
+
+## 2차 정렬 지정은 배열로
+## B 컬럼으로 먼저 정렬하고 같은 값이면 A 컬럼으로
+df2.sort_values(by=["B","A"])
+
+## random값을 도출해서 DataFrame을 생성
+np.random.seed(0)
+## 0~9까지의 정수형 난수를 생성(6,4)형태로 생성
+df = pd.DataFrame(np.random.randint(0,10,(6,4)))
+df.columns=["A","B","C","D"]
+df.index = pd.date_range("20190101",periods=6)
+
+## 새로운 column을 추가
+df["E"] = ["AA","BB","CC","CC","AA","CC"]
+
+## unique() : 중복을 제가허기 위한 함수
+## 중복 제거 후 결과값이 numpy.ndarray 리턴
+df["E"].unique()
+
+# 각 value값들의 개수를 세는 함수
+## 결과값이 Series로 return
+df["E"].value_counts()
+##boolean mask를 만들기 위한 함수
+display(df)
+df["E"].isin(["AA","BB"])
+
+data1 = {"학번":[1,2,3,4],
+        "이름":["홍길동","김길동","이순신","강감찬"],
+        "학년":[2,4,1,3]}
+data2 =  {"학번":[1,2,3,4],
+         "학과":["컴퓨터","경영","철학","기계"],
+         "학점":[3.5,1.8,4.5,2.9]}
+df1 = pd.DataFrame(data1)
+df2 = pd.DataFrame(data2)
+display(df1)
+display(df2)
+
+# 공통된 col 명으로 join
+# inner Join
+# pd.merge(df1, df2, on="학번", how="inner")       
+# outer Join 
+# pd.merge(df1, df2, on="학번", how="outer")    
+# left outer join이면 왼쪽 오소는 무조건 가져오고, 
+# 오른 요소 중에 왼쪽과 mapping되는 애가 없으면 안 가져옴
+pd.merge(df1, df2, on="학번", how="left")      
+
+data1 = {"학번":[1,2,3,4],
+        "이름":["홍길동","김길동","이순신","강감찬"],
+        "학년":[2,4,1,3]}
+data2 =  {"학생학번":[1,2,3,4],
+         "학과":["컴퓨터","경영","철학","기계"],
+         "학점":[3.5,1.8,4.5,2.9]}
+df1 = pd.DataFrame(data1)
+df2 = pd.DataFrame(data2)
+display(df1)
+display(df2)
+# col 명이 다를 때 지정해서 join하는 방법
+# left_on의 left는 먼저 입력한 dataframe parameter를 가리킴 : df1
+# 결합한 학번과 학생학번이 두 개 다 출력됨!
+pd.merge(df1,df2,left_on="학번",right_on = "학생학번",how="inner")
+
+data1 = {"학번":[1,2,3,4],
+        "이름":["홍길동","김길동","이순신","강감찬"],
+        "학년":[2,4,1,3]}
+data2 =  {"학과":["컴퓨터","경영","철학","기계"],
+         "학점":[3.5,1.8,4.5,2.9]}
+df1 = pd.DataFrame(data1)
+df2 = pd.DataFrame(data2, index = [1,2,4,5])
+display(df1)
+display(df2)
+# col과 index를 기반으로 join할 때
+pd.merge(df1,df2,left_on="학번", right_index=True, how= "inner")
+
+data1 = { "이름":["홍길동","김길동","이순신","강감찬"],
+        "학년":[2,4,1,3]}
+data2 =  {"학과":["컴퓨터","경영","철학","기계"],
+         "학점":[3.5,1.8,4.5,2.9]}
+df1 = pd.DataFrame(data1,index = [1,2,3,4])
+df2 = pd.DataFrame(data2, index = [1,2,4,5])
+display(df1)
+display(df2)
+# index와 index를 기반으로 join할 때
+df = pd.merge(df1,df2,left_index=True, right_index=True, how= "inner")
+
+df_r = pd.read_csv("./data/MovieLens/ratings.csv")
+df_m = pd.read_csv("./data/MovieLens/movies.csv")
+
+df = pd.merge(df_m,df_r,on="movieId", how= "inner")
+display(df["movieId"],df["title"],df.loc[df["movieId"] == i,"rating"].mean())
+
+## random값을 도출해서 DataFrame을 생성
+np.random.seed(0)
+## 0~9까지의 정수형 난수를 생성(6,4)형태로 생성
+df = pd.DataFrame(np.random.randint(0,10,(6,4)))
+df.columns=["A","B","C","D"]
+df.index = pd.date_range("20190101",periods=6)
+
+## 새로운 column을 추가
+df["E"] = ["AA","BB","CC","CC","AA","CC"]
+
+## unique() : 중복을 제가허기 위한 함수
+## 중복 제거 후 결과값이 numpy.ndarray 리턴
+df["E"].unique()
+
+# 각 value값들의 개수를 세는 함수
+## 결과값이 Series로 return
+df["E"].value_counts()
+##boolean mask를 만들기 위한 함수
+display(df)
+df["E"].isin(["AA","BB"])
