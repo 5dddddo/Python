@@ -1,0 +1,306 @@
+## 1. 주석 {##, ''' '''}
+
+## 2. 내장상수
+# True , False , None( 값이 존재하지 않음 )
+a = True
+b = False
+c = None
+
+## 3. built-in data type ( 내장형 )
+## 3-1. Numeric type( 숫자형 )
+a = 123 # 정수
+b = 3.1415926535 # 실수
+c = 3.14E10 # 실수( 지수형태 )
+
+div = 3/4
+print(div)  # java에서는 O
+            # 코드를 실행하려면 ctrl + enter
+    
+result = 3 ** 4 # 3의 4재곱 ( 제곱 )
+print(result)
+
+result = 10 % 3 # 나머지
+print(result)
+
+result = 10 // 3 # 몫
+print(result)
+
+### 3-2. Text Sequence type : str
+## 문자열 생성 방법
+
+# java는 문자열(" ")과 문자(' ')
+# python는 문자 개념 X , 구분없이 문자열로 취급 ("" , ' ')
+
+a = " 소리없는 아우성 "
+b = '안녕하세요'
+
+c = """ 여러줄에 걸친
+문자열도
+만들수 있어요""" # 개행문자도 포함
+
+# 문자열 연산 , indexing , slicing
+first = "이것은"
+second = "소리없는"
+third = "아우성"
+print(first+second+third)
+
+num = 100
+# print(first+num) # ERROR
+print(first+str(num)) 
+
+text = 'python'
+print(text*3) # 문자열 3번 찍어줌
+
+#sample text
+sample_text = "Show me the money"
+
+# str(문자열) => Text Sequence Type
+print(sample_text[0]) # 배열처럼 동작
+print(sample_text[-2]) # 끝에서 두번째
+# 슬라이싱할 때 앞은 포함, 뒤는 불포함
+print(sample_text[1:3]) # index 1~2까지 출력
+print(sample_text[:3]) # 0번 인덱스부터 2까지 출력
+print(sample_text[3:]) # 3부터 끝까지 출력
+print(sample_text[:]) #문자열 전체 출력
+
+print("sample" in sample_text) # sample_text 문자열 내에 sample이 있는지 결과를 논리값으로 반환
+print("sample" not in sample_text)
+
+# 문자열 formatting
+apple = 30
+my_text = "나는 땅콩을 %d개 가지고 있어요" %0
+print(my_text)
+
+apple = 5
+banana = "여섯"
+my_text= "나는 사과 %d개와 바나나 %s개를 가지고 있어요" %(apple,banana)
+print(my_text)
+
+
+# 문자열 함수
+sample_text = "cocacola"
+print(len(sample_text)); # 문자열 길이
+print(sample_text.count("c")) # 문자열이 몇 번 나오는지 count하는 함수
+
+print(sample_text.find("o")) # 특정 문자열이 처음 나오는 index 반환
+                             # -1 : 찾는 문자열 없음
+
+    
+a = ":"
+b = "abcd"
+print(a.join(b)); # => a:b:c:d로 만들기
+
+a= "       hobby     "
+print(a.upper()) # 대문자 변환
+print(a.lower()) # 소문자 변환
+print(a.strip()) # 문자열의 앞,뒤 공백 제거
+
+# Python Sequence Type : list
+# java의 arraylist와 상당히 유사
+
+#list 생성
+a = list()    # 공백 리스트 생성1
+a = []        # 공백 리스트 생성2
+a = [1,2,3]   # 일반적인 리스트 생성
+a = [1,2,3,"안녕하세요",False , 3.15]  # 여러 타입을 리스트 안에 담을 수 있음
+a = [1,2,[3,4,5]]  # list 안에 list도 가능
+
+
+# indexing과 slicing 사용 가능
+print(a[0])
+print(a[-2])
+print(a[1:3])
+
+# list의 연산
+a = [1,2,3]
+b = [5,6,7]
+
+print(a+b)
+print(a*3)
+
+# indexing
+a = [1,2,3]
+a[0] = [9,9,9]
+print(a)
+
+# slicing
+# 0~1번까지의 list를 다른 list로 대체해라
+a[0:1] = [9,9,9]
+
+# a[0]을 지칭하지만 인덱싱과 슬라이싱의 결과가 다름
+print(a)
+# [9,9,9,2,3]
+
+
+# a = [1,2,6,7]로 바꾸려면
+a = [1,2,3,4,5,6,7]
+a[2:5] = []
+print(a)
+
+# list의 사용 함수
+my_list = [1,2,3]
+print(my_list)
+
+#맨 마지막 index에 값을 추가
+my_list.append(4)
+print(my_list)
+
+my_list.append([5,6,7])
+print(my_list)
+
+my_list = [6,3,8,2,1,9]
+my_list.sort()
+# sort() : 기본적으로 오름차순 형태로 정렬
+print(my_list)
+
+
+my_list.reverse()
+# 순서를 역으로 바뀜. sort 후 사용시 내림차순 정렬
+print(my_list)
+
+my_list = [7,9,4,1,3]
+# 찾는 값의 위치를 return
+print(my_list.index(1))
+
+# Python Sequence Type : Tuple
+# list와 거의 유사
+# 표현 방법 다름. 원본에 대한 수정, 삭제가 불가능 , readonly
+# 리스트 : [] , 튜플 : ()
+
+a = ()
+a = (1,2,3) # [1,2,3]
+a = (1) # 튜플이 아니라 숫자 1을 의미함
+
+# 요소가 1개만 있을 때 튜플로 표현하려면 , 찍어줘야 함
+a = (1,)
+a = (1,2,3,4)
+# 튜플은 괄호 생략 가능
+a = 1,2,3,4
+
+# a = 10 b = 20 c = 30
+a,b,c = 10,20,30
+
+# indexing과 slicing 둘 다 사용할 수 있음
+a = 1,2,3,4
+print(a[1]) # 2 출력
+print(a[2:4]) # slicing은 원본은 그대로 두고 원하는 구간을 메모리에 복사해서 쓰는 것
+
+#list와 마찬가지로 +, * 연산이 가능
+a = (1,2,3)
+b = (5,6,7)
+print(a+b)
+
+#list와 tuple 간의 변환
+my_list = [1,2,3]
+my_tuple = tuple(my_list)
+
+my_tuple = 10,20,30,40
+my_list = list(my_tuple)
+print(my_list)
+
+# Python Sequence Type : range
+# range는 숫자 sequence로 주로 for문에서 사용
+
+
+# range의 인자가 1개이면 0부터 시작해서 9까지1씩 증가
+my_range = range(10)
+print(my_range)
+
+# range의 인자가 2개이면 시작, 끝
+
+my_range = range(10,20)
+print(my_range)
+
+# range의 인자가 3개이면 시작,끝,증감을 의미
+my_range = range(10,20,3)
+print(my_range)
+
+# my_range 는 10,13,16,19 가짐
+print(12 in my_range)
+
+#range도 list나 tuple처럼 indexing과 slicing 가능
+my_range = range(10,20,3)
+print(my_range[-1])
+print(my_range[:2])
+
+#range를 이용한 for문
+for tmp in range(10,20,2):
+    print(tmp)
+    
+# Python Mapping Type : dict
+
+# 표현법은 JSON 표현과 유사
+# { "name" : "홍길동" , "age" : 30}
+
+my_dict = {"name" : "홍길동" , "age" : 30}
+print(type(my_dict))
+
+# 새로운 dict 추가하려면 key:value로 추가
+my_dict[100] = "홍길동"
+print(my_dict)
+
+del my_dict["age"]
+print(my_dict)
+
+# key값이 중복되는 경우
+# 어떤 값이 할당될지 알 수 없음
+my_dict={"name":"홍길동", "age":30, "age":40}
+
+# keys() 함수
+my_dict = {"name": "홍길동" , "age" : 30, "address":"서울"}
+# return 값들의 리스트처럼 생긴 객체
+# list와 유사하지만 list의 함수는 사용할 수 없음
+print(my_dict.keys())
+
+#values() 함수 : dict의 value들만 뽑아냄
+#items() 함수 : (key,value)의 형태인 tuple로 리스트처럼 생긴 객체를 return 
+
+my_dict = {"name": "홍길동" , "age" : 30, "address":"서울"}
+for tmp in my_dict.keys():
+    print("{0}, {1}".format(tmp,my_dict[tmp]))
+
+# Python set Type : set
+# set의 가장 큰 특징 : 중복이 없는 저장 장소, 순서가 없는 저장 장소
+
+# set 생성 => {1,2,3}
+my_set = set([1,2,3])
+print(my_set)
+my_set = set("hello")
+print(my_set)
+
+# 기본적인 set 연산
+# 합집합, 교집합, 차집합
+s1 = {1,2,3,4,5}
+s2 = {5,6,7,8,9}
+
+# 교집합 (intersection)
+print(s1 & s2)
+
+# 합집합 (union)
+print(s1 | s2)
+
+# 차집합 ( differences )
+print(s1 - s2)
+
+# 기타 사용가능한 method
+my_set = {1,2,3,4,5}
+# set에 새로운 요소를 추가하려면
+my_set.add(10)
+
+# set에 여러개를 추가하려면
+my_set.update([7,8,9])
+
+# set에서 삭제할 경우
+my_set.remove(1)
+
+# Python Data Type - bool
+# 논리 상수인 True, False를 사용
+
+# 다음과 같은 경우는 false로 간주
+
+''' 
+1. 빈 문자열은 논리 연산시 False("")
+2. 빈 리스트([]), 빈 튜플(()), 빈 dict ({})
+3. 숫자 0 False 간주, 나머지 다른 숫자 True 간주
+4. None => False 간주
+'''
