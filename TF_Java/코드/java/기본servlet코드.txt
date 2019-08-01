@@ -1,0 +1,58 @@
+package com.test;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class SimpleServlet
+ */
+@WebServlet("/sample")
+public class SimpleServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public SimpleServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// 1. 입력
+		
+		// 2. 로직
+		
+		
+		// 3. 출력
+		// client한테 전달할 request의 형식을 browser에게 알려줘야 준비함
+		response.setContentType("text/html; charset=utf8");
+		// client에 대한 데이터 연결 통로 생성
+		PrintWriter out = response.getWriter();
+		// 통로(stream)에 데이터가 적재만 되고 전송은 되지 않음
+		// 스트림에 데이터가 꽉 차거나 스트림을 닫거나 혹은 강제로 스트림을 비울 때 클라이언트에게 데이터가 전송됨
+		out.print("이것은 소리없는 아우성!");
+		// 데이터를 전송하고 스트림을 비움
+		out.flush();
+		// 사용된 resource를 해제
+		out.close();
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		doGet(request, response);
+	}
+
+}
